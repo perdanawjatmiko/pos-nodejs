@@ -2,11 +2,13 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
 const { authenticate, authorize } = require("../middlewares/authMiddleware");
+const { productValidation } = require('../middlewares/validators/productValidator');
+const validate = require('../middlewares/validateResult');
 
 router.get('/', authenticate, productController.getAll);
 router.get('/:id', authenticate, productController.getOne);
-router.post('/', authenticate, authorize(["admin", "owner"]), productController.create);
-router.put('/:id', authenticate, authorize(["admin", "owner"]), productController.update);
+router.post('/', authenticate, authorize(["admin", "owner"]), productValidation, validate, productController.create);
+router.put('/:id', authenticate, authorize(["admin", "owner"]), productValidation, validate, productController.update);
 router.delete('/:id', authenticate, authorize(["admin", "owner"]), productController.destroy);
 
 module.exports = router;
