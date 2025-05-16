@@ -23,7 +23,9 @@ module.exports = {
   async create(req, res) {
     try {
       const { name, price, stock, category_id } = req.body;
-      const newProduct = await Product.create({ name, price, stock, category_id });
+      const image = req.file ? req.file.filename : null;
+
+      const newProduct = await Product.create({ name, price, stock, image, category_id });
       res.status(201).json(newProduct);
     } catch (err) {
       res.status(500).json({ error: err.message });
