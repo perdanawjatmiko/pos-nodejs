@@ -1,4 +1,6 @@
 const { Product, Category } = require('../models');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
   async getAll(req, res) {
@@ -34,11 +36,21 @@ module.exports = {
 
   async update(req, res) {
     try {
+      const { name, price, stock, category_id } = req.body;
+      
       const product = await Product.findByPk(req.params.id);
       if (!product) return res.status(404).json({ message: 'Product not found' });
 
-      const { name, price, stock, category_id } = req.body;
-      await product.update({ name, price, stock, category_id });
+      if (req.file && product.image) {
+        const oldPath = path.join(__dirname, '../uploads', product.image);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+
+      const newImage = req.file ? req.file.filename : product.image;
+
+      await product.update({ name, price, stock, category_id, image: newImage });
       res.json(product);
     } catch (err) {
       res.status(500).json({ error: err.message });

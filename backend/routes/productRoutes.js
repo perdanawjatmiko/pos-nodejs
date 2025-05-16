@@ -9,7 +9,7 @@ const upload = require('../middlewares/uploadMiddleware');
 router.get('/', authenticate, productController.getAll);
 router.get('/:id', authenticate, productController.getOne);
 router.post('/', authenticate, authorize(["admin", "owner"]), upload.single('image'), productValidation, validate, productController.create);
-router.put('/:id', authenticate, authorize(["admin", "owner"]), updateValidation, validate, productController.update);
+router.put('/:id', authenticate, authorize(["admin", "owner"]), upload.single('image'), updateValidation,  validate, productController.update);
 router.delete('/:id', authenticate, authorize(["admin", "owner"]), productController.destroy);
 
 module.exports = router;
