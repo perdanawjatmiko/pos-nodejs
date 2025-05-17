@@ -8,9 +8,10 @@ const validate = require('../middlewares/validateResult');
 const {uploadProduct} = require('../middlewares/uploadMiddleware');
 
 router.get('/', authenticate, productController.getAll);
-router.get('/:id', authenticate, productController.getOne);
+// router.get('/:id', authenticate, productController.getOne);
+router.get('/:slug', authenticate, productController.getBySlug);
 router.post('/', authenticate, authorize(["admin", "owner"]), uploadProduct.single('image'), productValidation, validate, productController.create);
-router.put('/:id', authenticate, authorize(["admin", "owner"]), uploadProduct.single('image'), updateValidation,  validate, productController.update);
+router.put('/:slug', authenticate, authorize(["admin", "owner"]), uploadProduct.single('image'), updateValidation,  validate, productController.update);
 router.delete('/:id', authenticate, authorize(["admin", "owner"]), productController.destroy);
 
 module.exports = router;

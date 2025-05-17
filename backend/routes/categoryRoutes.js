@@ -7,7 +7,7 @@ const validate = require('../middlewares/validateResult');
 
 router.get('/', authenticate, categoryController.getAll);
 router.post('/', authenticate, categoryValidation, validate, authorize(["admin", "owner"]), categoryController.create);
-router.put('/:id', authenticate, categoryValidation, validate, authorize(["admin", "owner"]), categoryController.update);
+router.put('/:slug', authenticate, categoryValidation, validate, authorize(["admin", "owner"]), categoryController.update);
 router.delete('/:id', authenticate, authorize(["admin", "owner"]), categoryController.destroy);
 router.get('/:slug', authenticate, categoryController.getBySlug);
 
