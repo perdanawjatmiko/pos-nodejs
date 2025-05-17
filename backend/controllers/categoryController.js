@@ -94,7 +94,7 @@ module.exports = {
   // ✏️ Update kategori
   async update(req, res) {
     try {
-      const category = await Category.findByPk(req.params.id);
+      const category = await Category.findOne({ where: { slug: req.params.slug } });
       if (!category) {
         return res.status(404).json({ message: "Category not found" });
       }
