@@ -25,7 +25,7 @@ module.exports = {
   async create(req, res) {
     try {
       const { name, price, stock, category_id } = req.body;
-      const image = req.file ? req.file.filename : null;
+      const image = req.file ? `products/${req.file.filename}` : null;
 
       const newProduct = await Product.create({ name, price, stock, image, category_id });
       res.status(201).json(newProduct);
@@ -61,6 +61,15 @@ module.exports = {
     try {
       const product = await Product.findByPk(req.params.id);
       if (!product) return res.status(404).json({ message: 'Product not found' });
+
+      // Hapus gambar jika ada
+      if (product.image) {
+        const imagePath = path.join(__dirname, '..', 'uploads', product.image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath); // atau gunakan fs.promises.unlink() untuk async
+        }
+        console.log(imagePath)
+      }
 
       await product.destroy();
       res.json({ message: 'Product deleted' });

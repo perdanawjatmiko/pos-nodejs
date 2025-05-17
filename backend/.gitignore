@@ -22,4 +22,5 @@ coverage/
 
 # VS Code
 .vscode/
-uploads/
+uploads/avatars/*
+uploads/products/*

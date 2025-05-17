@@ -1,19 +1,30 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-// Konfigurasi penyimpanan
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // folder upload
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+// Fungsi untuk memastikan folder ada, jika tidak maka buat
+const ensureDirExists = (dirPath) => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
   }
-});
+};
 
-// Filter file (opsional: hanya gambar)
+// Fungsi untuk membuat konfigurasi storage berdasarkan folder
+const createStorage = (subfolder) =>
+  multer.diskStorage({
+    destination: (req, file, cb) => {
+      const fullPath = path.join('uploads', subfolder);
+      ensureDirExists(fullPath);
+      cb(null, fullPath);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    },
+  });
+
+// Filter hanya izinkan file gambar
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png/;
   const ext = path.extname(file.originalname).toLowerCase();
@@ -24,6 +35,13 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage, fileFilter });
+// Inisialisasi uploaders
+const uploadDefault = multer({ storage: createStorage(''), fileFilter });
+const uploadAvatar = multer({ storage: createStorage('avatars'), fileFilter });
+const uploadProduct = multer({ storage: createStorage('products'), fileFilter });
 
-module.exports = upload;
+module.exports = {
+  uploadDefault,
+  uploadAvatar,
+  uploadProduct,
+};
